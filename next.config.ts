@@ -9,6 +9,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/ref",
+        destination: "https://lazlle-ref26.vercel.app",
+      },
+      {
+        source: "/ref/:path*",
+        destination: "https://lazlle-ref26.vercel.app/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
