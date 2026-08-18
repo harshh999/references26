@@ -20,11 +20,7 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
       touchMultiplier: 1.5,
     });
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+
 
     // Sync GSAP ScrollTrigger with Lenis
     lenis.on("scroll", ScrollTrigger.update);

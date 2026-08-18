@@ -25,15 +25,7 @@ export default function CategoryTransition({
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Pin/visually hold the category transition briefly when it enters the viewport
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        pin: true,
-        start: "top top",
-        end: "+=40%",
-        scrub: true,
-        pinSpacing: true,
-      });
+
 
       // Coordinated timeline for category entry animations (simultaneous number & name)
       const tl = gsap.timeline({
