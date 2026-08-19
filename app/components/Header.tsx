@@ -1,50 +1,60 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { useEffect, useState } from "react";
+import { categories } from "@/app/data/references";
 
 export default function Header() {
-  const headerRef = useRef<HTMLElement>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      window.scrollTo({
+        top: el.getBoundingClientRect().top + window.scrollY - 80,
+        behavior: "smooth",
+      });
+    }
+  };
 
   useEffect(() => {
-    // Initial fade and slide reveal
-    gsap.fromTo(
-      headerRef.current,
-      { y: -20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, delay: 0.2, ease: "power3.out" }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-20% 0px -80% 0px" }
     );
 
-    // Detect scroll for compact styling
-    const handleScroll = () => {
-      if (window.scrollY > 40) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
+    categories.forEach((cat) => {
+      const el = document.getElementById(cat.id);
+      if (el) observer.observe(el);
+    });
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <header
-      ref={headerRef}
-      id="site-header"
-      className={`sticky top-0 z-50 border-b border-border transition-all duration-500 ease-in-out ${
-        scrolled
-          ? "bg-background/85 backdrop-blur-md py-4"
-          : "bg-transparent py-6"
-      }`}
-    >
-      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 md:px-7 lg:px-12">
-        <span className="text-[11px] font-semibold tracking-[0.16em] text-foreground uppercase">
-          LAZZLE & CO PRODUCTIONS
-        </span>
-        <span className="text-[11px] font-semibold tracking-[0.16em] text-muted uppercase">
-          SELECTED REFERENCES
-        </span>
+    <header className="sticky top-0 z-50 w-full bg-[#F4F3EF]/95 backdrop-blur-sm border-b border-black/5 py-4">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="text-xs font-semibold tracking-wider uppercase text-foreground">
+          LAZZLE & CO / REFERENCES
+        </div>
+        <nav className="flex gap-6 md:gap-8 overflow-x-auto w-full md:w-auto scrollbar-none justify-center md:justify-end">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => scrollTo(cat.id)}
+              className={`text-[13px] tracking-wide transition-colors whitespace-nowrap ${
+                activeSection === cat.id ? "text-foreground font-medium" : "text-muted hover:text-foreground/80"
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </nav>
       </div>
     </header>
   );
